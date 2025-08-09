@@ -4,55 +4,44 @@ export default function HomePage() {
   const [activeDomain, setActiveDomain] = useState(null);
   const [systemsView, setSystemsView] = useState(false);
 
-  // Exact, tight definitions + why-lines (no fluff)
+  // Exact, tight definitions + why-lines
   const domains = [
     {
       id: 'function',
       label: 'How I Function',
       color: '#00A651',
-      what:
-        'Foundation domain. Clear the “highway” (brain & body) so every other domain can move.',
-      why:
-        'Because foundation drives everything else. When things feel foggy or effortful, start here.',
+      what: 'Foundation domain. Clear the “highway” (brain & body) so every other domain can move.',
+      why: 'Foundation drives everything else. When things feel foggy or effortful, start here.',
     },
     {
       id: 'learn',
       label: 'How I Learn',
       color: '#1B75BC',
-      what:
-        'Learning progression. We can only apply at the level we understand.',
-      why:
-        'Strengthen the first weak link in the progression to unlock real progress.',
+      what: 'Learning progression. We can only apply at the level we understand.',
+      why: 'Strengthen the first weak link in the progression to unlock progress.',
     },
     {
       id: 'manage',
       label: 'How I Manage',
       color: '#ED1C24',
-      what:
-        'Bridge between knowing and doing (attention, organization, planning, initiation, time).',
-      why:
-        'Structure turns knowledge into action. Sequence matters so each step scaffolds the next.',
+      what: 'Bridge between knowing and doing (attention, organization, planning, initiation, time).',
+      why: 'Structure turns knowledge into action. Sequence matters so each step scaffolds the next.',
     },
     {
       id: 'feel',
       label: 'How I Feel',
       color: '#F7941D',
-      what:
-        'Social‑emotional functioning. Emotions are signals that we may need support.',
-      why:
-        'Balanced regulation and relationships enable cognition, judgment, and durable effort.',
+      what: 'Social‑emotional functioning. Emotions are signals that we may need support.',
+      why: 'Balanced regulation and relationships enable cognition, judgment, and durable effort.',
     },
     {
       id: 'do',
       label: 'What I Do',
       color: '#EC008C',
-      what:
-        'Visible output and self‑efficacy.',
-      why:
-        'Treat results as feedback about the system. If effort stalls, look upstream first.',
+      what: 'Visible output and self‑efficacy.',
+      why: 'Treat results as feedback about the system. If effort stalls, look upstream first.',
     },
   ];
-
   const byId = Object.fromEntries(domains.map(d => [d.id, d]));
   const isActive = id => activeDomain === id;
 
@@ -62,18 +51,13 @@ export default function HomePage() {
         title: 'How the system works together',
         color: '#0f172a',
         text:
-          'Start upstream. Strong Function enables effective Learning, Managing, and Feeling. These three interact and converge in What I Do (results). Results are signals, not the source — they point back upstream so you can rebalance before adding more effort.',
-        why: 'Why this matters: You remove friction instead of pushing harder, which makes progress durable.',
+          'Start upstream. Strong Function enables effective Learning, Managing, and Feeling. These interact and converge in What I Do (results). Results are signals, not the source — they point back upstream so you can rebalance before adding more effort.',
+        why: 'You remove friction instead of pushing harder, which makes progress durable.',
       };
     }
     if (activeDomain) {
       const d = byId[activeDomain];
-      return {
-        title: d.label,
-        color: d.color,
-        text: d.what,
-        why: `Why this matters: ${d.why}`,
-      };
+      return { title: d.label, color: d.color, text: d.what, why: d.why };
     }
     return {
       title: 'Click a domain',
@@ -85,11 +69,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      {/* small CSS to remove default focus ring + add glow */}
+      {/* remove black focus boxes + add gentle glow/scale */}
       <style>{`
         .tlf-hit { cursor: pointer; transition: transform .22s ease, filter .22s ease; transform-origin: center; outline: none; }
-        .tlf-hit:focus { outline: none; }
-        .tlf-hit:focus-visible { outline: none; filter: drop-shadow(0 0 10px rgba(0,0,0,.12)); }
+        .tlf-hit:focus, .tlf-hit:focus-visible { outline: none; }
         .tlf-grow { transform: scale(1.06); }
       `}</style>
 
@@ -100,13 +83,9 @@ export default function HomePage() {
             Click a domain to see exactly what it is and why it matters. Or open Systems View for a concise overview of how the domains interact.
           </p>
 
-          {/* Controls */}
           <div className="mt-4 flex justify-center gap-3">
             <button
-              onClick={() => {
-                setSystemsView(s => !s);
-                setActiveDomain(null);
-              }}
+              onClick={() => { setSystemsView(s => !s); setActiveDomain(null); }}
               className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
               aria-pressed={systemsView ? 'true' : 'false'}
               aria-label="Toggle Systems View"
@@ -142,7 +121,6 @@ export default function HomePage() {
               />
 
               {/* Inner Venn */}
-              {/* Learn */}
               <circle
                 cx="145" cy="175" r="86"
                 fill={byId.learn.color}
@@ -154,7 +132,6 @@ export default function HomePage() {
                 onClick={() => { setSystemsView(false); setActiveDomain('learn'); }}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('learn'); } }}
               />
-              {/* Manage */}
               <circle
                 cx="255" cy="175" r="86"
                 fill={byId.manage.color}
@@ -166,7 +143,6 @@ export default function HomePage() {
                 onClick={() => { setSystemsView(false); setActiveDomain('manage'); }}
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('manage'); } }}
               />
-              {/* Feel */}
               <circle
                 cx="200" cy="265" r="86"
                 fill={byId.feel.color}
@@ -179,7 +155,7 @@ export default function HomePage() {
                 onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('feel'); } }}
               />
 
-              {/* What I Do: small star in center */}
+              {/* What I Do: small center star */}
               <g
                 className={`tlf-hit ${isActive('do') ? 'tlf-grow' : ''}`}
                 style={{ transformOrigin: '200px 205px' }}
@@ -201,9 +177,7 @@ export default function HomePage() {
             className="mt-8 max-w-xl mx-auto p-6 bg-white rounded-2xl shadow"
             style={{
               border: `4px solid ${info.color}`,
-              boxShadow: systemsView
-                ? '0 8px 24px rgba(0,0,0,.06)'
-                : `0 0 14px ${info.color}33`,
+              boxShadow: systemsView ? '0 8px 24px rgba(0,0,0,.06)' : `0 0 14px ${info.color}33`,
               color: info.color,
             }}
           >
@@ -213,7 +187,7 @@ export default function HomePage() {
             <p className="text-slate-700">{info.text}</p>
             {info.why && (
               <p className="text-slate-700 mt-2">
-                <strong>Why this matters:</strong> {info.why.replace(/^Why this matters:\s*/,'')}
+                <strong>Why this matters:</strong> {info.why}
               </p>
             )}
             {(activeDomain || systemsView) && (
