@@ -2,204 +2,51 @@ import { useState } from 'react';
 
 export default function HomePage() {
   const [activeDomain, setActiveDomain] = useState(null);
-  const [systemsView, setSystemsView] = useState(false);
 
-  // Exact, tight definitions + why-lines
   const domains = [
-    {
-      id: 'function',
-      label: 'How I Function',
-      color: '#00A651',
-      what: 'Foundation domain. Clear the “highway” (brain & body) so every other domain can move.',
-      why: 'Foundation drives everything else. When things feel foggy or effortful, start here.',
-    },
-    {
-      id: 'learn',
-      label: 'How I Learn',
-      color: '#1B75BC',
-      what: 'Learning progression. We can only apply at the level we understand.',
-      why: 'Strengthen the first weak link in the progression to unlock progress.',
-    },
-    {
-      id: 'manage',
-      label: 'How I Manage',
-      color: '#ED1C24',
-      what: 'Bridge between knowing and doing (attention, organization, planning, initiation, time).',
-      why: 'Structure turns knowledge into action. Sequence matters so each step scaffolds the next.',
-    },
-    {
-      id: 'feel',
-      label: 'How I Feel',
-      color: '#F7941D',
-      what: 'Social‑emotional functioning. Emotions are signals that we may need support.',
-      why: 'Balanced regulation and relationships enable cognition, judgment, and durable effort.',
-    },
-    {
-      id: 'do',
-      label: 'What I Do',
-      color: '#EC008C',
-      what: 'Visible output and self‑efficacy.',
-      why: 'Treat results as feedback about the system. If effort stalls, look upstream first.',
-    },
+    { id: 'function', label: 'How I Function', color: '#00A651', content: 'Neurological Functioning: Working memory, processing speed, sleep, hydration, nutrition, exercise, medication management.' },
+    { id: 'learn', label: 'How I Learn', color: '#1B75BC', content: 'Cognitive Functioning: Familiarity, remembering, understanding, applying, analyzing, evaluating, creating, overlearning.' },
+    { id: 'manage', label: 'How I Manage', color: '#ED1C24', content: 'Executive Functioning: Attention, flexibility, organization, planning, preparation, task initiation, time management.' },
+    { id: 'feel', label: 'How I Feel', color: '#F7941D', content: 'Social-Emotional Functioning: Self-awareness, self-management, social awareness, relationship skills, responsible decision-making.' },
+    { id: 'do', label: 'What I Do', color: '#EC008C', content: 'Self-Efficacy: Clarity, autonomy, motivation, engagement, perseverance, resilience, achievement.' }
   ];
-  const byId = Object.fromEntries(domains.map(d => [d.id, d]));
-  const isActive = id => activeDomain === id;
 
-  const info = (() => {
-    if (systemsView) {
-      return {
-        title: 'How the system works together',
-        color: '#0f172a',
-        text:
-          'Start upstream. Strong Function enables effective Learning, Managing, and Feeling. These interact and converge in What I Do (results). Results are signals, not the source — they point back upstream so you can rebalance before adding more effort.',
-        why: 'You remove friction instead of pushing harder, which makes progress durable.',
-      };
-    }
-    if (activeDomain) {
-      const d = byId[activeDomain];
-      return { title: d.label, color: d.color, text: d.what, why: d.why };
-    }
-    return {
-      title: 'Click a domain',
-      color: '#0f172a',
-      text: 'You’ll see the exact definition and why it matters.',
-      why: '',
-    };
-  })();
+  const isActive = (id) => activeDomain && activeDomain.id === id;
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      {/* remove black focus boxes + add gentle glow/scale */}
-      <style>{`
-        .tlf-hit { cursor: pointer; transition: transform .22s ease, filter .22s ease; transform-origin: center; outline: none; }
-        .tlf-hit:focus, .tlf-hit:focus-visible { outline: none; }
-        .tlf-grow { transform: scale(1.06); }
-      `}</style>
-
-      <section className="py-12" id="tlf">
+      <section className="py-16" id="tlf">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-semibold">The Learning Framework™</h2>
-          <p className="mt-3 max-w-2xl mx-auto text-slate-600">
-            Click a domain to see exactly what it is and why it matters. Or open Systems View for a concise overview of how the domains interact.
-          </p>
-
-          <div className="mt-4 flex justify-center gap-3">
-            <button
-              onClick={() => { setSystemsView(s => !s); setActiveDomain(null); }}
-              className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
-              aria-pressed={systemsView ? 'true' : 'false'}
-              aria-label="Toggle Systems View"
-            >
-              {systemsView ? 'Systems View: On' : 'Systems View'}
-            </button>
-            {activeDomain && (
-              <button
-                onClick={() => setActiveDomain(null)}
-                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
-              >
-                Clear selection
-              </button>
-            )}
-          </div>
-
-          {/* Diagram */}
-          <div className="relative mt-10 flex justify-center">
-            <svg viewBox="0 0 400 400" className="w-[520px] h-auto">
-              {/* How I Function: big outer circle */}
-              <circle
-                cx="200" cy="200" r="182"
-                fill={byId.function.color}
-                fillOpacity="0.12"
-                stroke={byId.function.color}
-                strokeWidth={isActive('function') ? 5 : 3}
-                className={`tlf-hit ${isActive('function') ? 'tlf-grow' : ''}`}
-                style={{ filter: isActive('function') ? 'drop-shadow(0 0 12px rgba(0,166,81,0.35))' : 'none' }}
-                tabIndex={0}
-                aria-label="How I Function"
-                onClick={() => { setSystemsView(false); setActiveDomain('function'); }}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('function'); } }}
-              />
-
-              {/* Inner Venn */}
-              <circle
-                cx="145" cy="175" r="86"
-                fill={byId.learn.color}
-                fillOpacity={isActive('learn') ? 0.6 : 0.42}
-                className={`tlf-hit ${isActive('learn') ? 'tlf-grow' : ''}`}
-                style={{ transformOrigin: '145px 175px' }}
-                tabIndex={0}
-                aria-label="How I Learn"
-                onClick={() => { setSystemsView(false); setActiveDomain('learn'); }}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('learn'); } }}
-              />
-              <circle
-                cx="255" cy="175" r="86"
-                fill={byId.manage.color}
-                fillOpacity={isActive('manage') ? 0.6 : 0.42}
-                className={`tlf-hit ${isActive('manage') ? 'tlf-grow' : ''}`}
-                style={{ transformOrigin: '255px 175px' }}
-                tabIndex={0}
-                aria-label="How I Manage"
-                onClick={() => { setSystemsView(false); setActiveDomain('manage'); }}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('manage'); } }}
-              />
-              <circle
-                cx="200" cy="265" r="86"
-                fill={byId.feel.color}
-                fillOpacity={isActive('feel') ? 0.6 : 0.42}
-                className={`tlf-hit ${isActive('feel') ? 'tlf-grow' : ''}`}
-                style={{ transformOrigin: '200px 265px' }}
-                tabIndex={0}
-                aria-label="How I Feel"
-                onClick={() => { setSystemsView(false); setActiveDomain('feel'); }}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('feel'); } }}
-              />
-
-              {/* What I Do: small center star */}
-              <g
-                className={`tlf-hit ${isActive('do') ? 'tlf-grow' : ''}`}
-                style={{ transformOrigin: '200px 205px' }}
-                tabIndex={0}
-                aria-label="What I Do"
-                onClick={() => { setSystemsView(false); setActiveDomain('do'); }}
-                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('do'); } }}
-              >
-                <polygon
-                  points="200,193 203,202 212,202 206,207 208,216 200,211 192,216 194,207 188,202 197,202"
-                  fill={byId.do.color}
-                />
+          <h2 className="text-3xl font-semibold">The Learning Framework®</h2>
+          <p className="mt-3 max-w-2xl mx-auto text-slate-600">Click a domain in the Venn diagram to learn more.</p>
+          <div className="relative mt-12 flex justify-center">
+            <svg viewBox="0 0 400 400" className="w-[500px] h-auto">
+              <circle cx="200" cy="200" r="180" fill={domains[0].color} fillOpacity="0.15" stroke={domains[0].color} strokeWidth={isActive('function') ? 5 : 3} className="cursor-pointer transition-all duration-300" style={{ filter: isActive('function') ? 'drop-shadow(0 0 12px rgba(0,166,81,0.35))' : 'none' }} onClick={() => setActiveDomain(domains[0])} />
+              <circle cx="150" cy="180" r="85" fill={domains[1].color} fillOpacity={isActive('learn') ? 0.6 : 0.4} className="cursor-pointer transition-transform duration-300" style={{ transformOrigin: '150px 180px', transform: isActive('learn') ? 'scale(1.06)' : 'scale(1)' }} onClick={() => setActiveDomain(domains[1])} />
+              <circle cx="250" cy="180" r="85" fill={domains[2].color} fillOpacity={isActive('manage') ? 0.6 : 0.4} className="cursor-pointer transition-transform duration-300" style={{ transformOrigin: '250px 180px', transform: isActive('manage') ? 'scale(1.06)' : 'scale(1)' }} onClick={() => setActiveDomain(domains[2])} />
+              <circle cx="200" cy="260" r="85" fill={domains[3].color} fillOpacity={isActive('feel') ? 0.6 : 0.4} className="cursor-pointer transition-transform duration-300" style={{ transformOrigin: '200px 260px', transform: isActive('feel') ? 'scale(1.06)' : 'scale(1)' }} onClick={() => setActiveDomain(domains[3])} />
+              <g className="cursor-pointer transition-transform duration-300" style={{ transformOrigin: '200px 206px', transform: isActive('do') ? 'scale(1.15)' : 'scale(1)' }} onClick={() => setActiveDomain(domains[4])}>
+                <polygon points="200,190 204,202 217,202 206,210 210,222 200,215 190,222 194,210 183,202 196,202" fill={domains[4].color} />
               </g>
             </svg>
           </div>
 
-          {/* Info box */}
-          <div
-            className="mt-8 max-w-xl mx-auto p-6 bg-white rounded-2xl shadow"
-            style={{
-              border: `4px solid ${info.color}`,
-              boxShadow: systemsView ? '0 8px 24px rgba(0,0,0,.06)' : `0 0 14px ${info.color}33`,
-              color: info.color,
-            }}
-          >
-            <h3 className="text-xl font-semibold mb-2" style={{ color: info.color }}>
-              {info.title}
-            </h3>
-            <p className="text-slate-700">{info.text}</p>
-            {info.why && (
-              <p className="text-slate-700 mt-2">
-                <strong>Why this matters:</strong> {info.why}
-              </p>
-            )}
-            {(activeDomain || systemsView) && (
+          {activeDomain && (
+            <div
+              className="mt-8 max-w-xl mx-auto p-6 bg-white rounded-2xl shadow transition-colors duration-300"
+              style={{ border: `4px solid ${activeDomain.color}`, boxShadow: `0 0 12px ${activeDomain.color}55` }}
+            >
+              <h3 className="text-xl font-semibold mb-3" style={{ color: activeDomain.color }}>{activeDomain.label}</h3>
+              <p className="text-slate-600">{activeDomain.content}</p>
               <button
-                onClick={() => { setActiveDomain(null); setSystemsView(false); }}
-                className="mt-4 rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
-                style={{ color: info.color }}
+                onClick={() => setActiveDomain(null)}
+                className="mt-4 rounded-2xl border px-4 py-2 text-sm font-semibold hover:bg-slate-50"
+                style={{ borderColor: activeDomain.color, color: activeDomain.color }}
               >
                 Close
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
     </div>
