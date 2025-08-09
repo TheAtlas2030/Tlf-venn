@@ -1,247 +1,233 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Learning Framework™ • Interactive Venn</title>
-<style>
-  :root{
-    --c-function:#00A651;
-    --c-learn:#1B75BC;
-    --c-manage:#ED1C24;
-    --c-feel:#F7941D;
-    --c-do:#EC008C;
-    --ink:#0f172a;
-  }
-  body{margin:0;background:#fff;color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:980px;margin:40px auto;padding:0 16px}
-  .title{font-weight:700;font-size:28px;text-align:center}
-  .sub{margin:8px auto 18px;max-width:620px;text-align:center;color:#475569}
-  .controls{display:flex;gap:10px;justify-content:center;margin-bottom:10px}
-  .controls button{border:1px solid #cbd5e1;border-radius:999px;padding:8px 12px;background:#fff;font-size:14px;cursor:pointer}
-  .controls button[aria-pressed="true"]{border-color:#111827;box-shadow:0 0 0 2px #11182711}
-  .stage{display:flex;justify-content:center}
-  .stage svg{width:min(560px,90vw);height:auto}
-  .info{margin:20px auto 0;max-width:680px;background:#fff;border:4px solid #e2e8f0;border-radius:16px;padding:18px 20px;box-shadow:0 8px 24px rgba(0,0,0,.06);transition:border-color .2s, box-shadow .2s}
-  .info h3{margin:0 0 6px;font-size:18px;font-weight:700}
-  .info p{margin:0;color:#475569;line-height:1.55}
-  .why{margin-top:8px;font-size:14px;color:#334155}
-  .close{margin-top:12px;border:2px solid currentColor;border-radius:999px;padding:6px 12px;font-size:14px;background:#fff;cursor:pointer}
-  .hit{cursor:pointer;transition:transform .2s ease, filter .2s ease;transform-origin:center}
-  /* remove the rectangular focus box and use a gentle glow for keyboards */
-  .hit:focus{outline:none}
-  .hit:focus-visible{filter:drop-shadow(0 0 10px rgba(0,0,0,.12))}
-  .hit.active{filter:drop-shadow(0 0 10px rgba(0,0,0,.08))}
-  .grow{transform:scale(1.06)}
-  .sys-line{stroke:var(--ink);stroke-opacity:.25;stroke-width:2}
-  .sys-arrow{marker-end:url(#arrow)}
-  .sys-pulse{animation:pulse 1.8s ease-in-out infinite}
-  @keyframes pulse{0%{stroke-opacity:.25}50%{stroke-opacity:.55}100%{stroke-opacity:.25}}
-  .sys-note{font-size:12px;fill:var(--ink);fill-opacity:.6}
-</style>
-</head>
-<body>
-  <main class="wrap" id="tlf">
-    <h1 class="title">The Learning Framework™</h1>
-    <p class="sub">Click a domain to see exactly what it is and why it matters. Toggle “Systems View” to see how the domains influence each other.</p>
+import { useState } from 'react';
 
-    <div class="controls">
-      <button id="systemsToggle" type="button" aria-pressed="false">Systems View</button>
+export default function HomePage() {
+  const [activeDomain, setActiveDomain] = useState(null);
+  const [systemsView, setSystemsView] = useState(false);
+
+  // Exact, tight definitions + why-lines (no fluff)
+  const domains = [
+    {
+      id: 'function',
+      label: 'How I Function',
+      color: '#00A651',
+      what:
+        'Foundation domain. Clear the “highway” (brain & body) so every other domain can move.',
+      why:
+        'Because foundation drives everything else. When things feel foggy or effortful, start here.',
+    },
+    {
+      id: 'learn',
+      label: 'How I Learn',
+      color: '#1B75BC',
+      what:
+        'Learning progression. We can only apply at the level we understand.',
+      why:
+        'Strengthen the first weak link in the progression to unlock real progress.',
+    },
+    {
+      id: 'manage',
+      label: 'How I Manage',
+      color: '#ED1C24',
+      what:
+        'Bridge between knowing and doing (attention, organization, planning, initiation, time).',
+      why:
+        'Structure turns knowledge into action. Sequence matters so each step scaffolds the next.',
+    },
+    {
+      id: 'feel',
+      label: 'How I Feel',
+      color: '#F7941D',
+      what:
+        'Social‑emotional functioning. Emotions are signals that we may need support.',
+      why:
+        'Balanced regulation and relationships enable cognition, judgment, and durable effort.',
+    },
+    {
+      id: 'do',
+      label: 'What I Do',
+      color: '#EC008C',
+      what:
+        'Visible output and self‑efficacy.',
+      why:
+        'Treat results as feedback about the system. If effort stalls, look upstream first.',
+    },
+  ];
+
+  const byId = Object.fromEntries(domains.map(d => [d.id, d]));
+  const isActive = id => activeDomain === id;
+
+  const info = (() => {
+    if (systemsView) {
+      return {
+        title: 'How the system works together',
+        color: '#0f172a',
+        text:
+          'Start upstream. Strong Function enables effective Learning, Managing, and Feeling. These three interact and converge in What I Do (results). Results are signals, not the source — they point back upstream so you can rebalance before adding more effort.',
+        why: 'Why this matters: You remove friction instead of pushing harder, which makes progress durable.',
+      };
+    }
+    if (activeDomain) {
+      const d = byId[activeDomain];
+      return {
+        title: d.label,
+        color: d.color,
+        text: d.what,
+        why: `Why this matters: ${d.why}`,
+      };
+    }
+    return {
+      title: 'Click a domain',
+      color: '#0f172a',
+      text: 'You’ll see the exact definition and why it matters.',
+      why: '',
+    };
+  })();
+
+  return (
+    <div className="min-h-screen bg-white text-slate-900">
+      {/* small CSS to remove default focus ring + add glow */}
+      <style>{`
+        .tlf-hit { cursor: pointer; transition: transform .22s ease, filter .22s ease; transform-origin: center; outline: none; }
+        .tlf-hit:focus { outline: none; }
+        .tlf-hit:focus-visible { outline: none; filter: drop-shadow(0 0 10px rgba(0,0,0,.12)); }
+        .tlf-grow { transform: scale(1.06); }
+      `}</style>
+
+      <section className="py-12" id="tlf">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-semibold">The Learning Framework™</h2>
+          <p className="mt-3 max-w-2xl mx-auto text-slate-600">
+            Click a domain to see exactly what it is and why it matters. Or open Systems View for a concise overview of how the domains interact.
+          </p>
+
+          {/* Controls */}
+          <div className="mt-4 flex justify-center gap-3">
+            <button
+              onClick={() => {
+                setSystemsView(s => !s);
+                setActiveDomain(null);
+              }}
+              className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
+              aria-pressed={systemsView ? 'true' : 'false'}
+              aria-label="Toggle Systems View"
+            >
+              {systemsView ? 'Systems View: On' : 'Systems View'}
+            </button>
+            {activeDomain && (
+              <button
+                onClick={() => setActiveDomain(null)}
+                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
+              >
+                Clear selection
+              </button>
+            )}
+          </div>
+
+          {/* Diagram */}
+          <div className="relative mt-10 flex justify-center">
+            <svg viewBox="0 0 400 400" className="w-[520px] h-auto">
+              {/* How I Function: big outer circle */}
+              <circle
+                cx="200" cy="200" r="182"
+                fill={byId.function.color}
+                fillOpacity="0.12"
+                stroke={byId.function.color}
+                strokeWidth={isActive('function') ? 5 : 3}
+                className={`tlf-hit ${isActive('function') ? 'tlf-grow' : ''}`}
+                style={{ filter: isActive('function') ? 'drop-shadow(0 0 12px rgba(0,166,81,0.35))' : 'none' }}
+                tabIndex={0}
+                aria-label="How I Function"
+                onClick={() => { setSystemsView(false); setActiveDomain('function'); }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('function'); } }}
+              />
+
+              {/* Inner Venn */}
+              {/* Learn */}
+              <circle
+                cx="145" cy="175" r="86"
+                fill={byId.learn.color}
+                fillOpacity={isActive('learn') ? 0.6 : 0.42}
+                className={`tlf-hit ${isActive('learn') ? 'tlf-grow' : ''}`}
+                style={{ transformOrigin: '145px 175px' }}
+                tabIndex={0}
+                aria-label="How I Learn"
+                onClick={() => { setSystemsView(false); setActiveDomain('learn'); }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('learn'); } }}
+              />
+              {/* Manage */}
+              <circle
+                cx="255" cy="175" r="86"
+                fill={byId.manage.color}
+                fillOpacity={isActive('manage') ? 0.6 : 0.42}
+                className={`tlf-hit ${isActive('manage') ? 'tlf-grow' : ''}`}
+                style={{ transformOrigin: '255px 175px' }}
+                tabIndex={0}
+                aria-label="How I Manage"
+                onClick={() => { setSystemsView(false); setActiveDomain('manage'); }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('manage'); } }}
+              />
+              {/* Feel */}
+              <circle
+                cx="200" cy="265" r="86"
+                fill={byId.feel.color}
+                fillOpacity={isActive('feel') ? 0.6 : 0.42}
+                className={`tlf-hit ${isActive('feel') ? 'tlf-grow' : ''}`}
+                style={{ transformOrigin: '200px 265px' }}
+                tabIndex={0}
+                aria-label="How I Feel"
+                onClick={() => { setSystemsView(false); setActiveDomain('feel'); }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('feel'); } }}
+              />
+
+              {/* What I Do: small star in center */}
+              <g
+                className={`tlf-hit ${isActive('do') ? 'tlf-grow' : ''}`}
+                style={{ transformOrigin: '200px 205px' }}
+                tabIndex={0}
+                aria-label="What I Do"
+                onClick={() => { setSystemsView(false); setActiveDomain('do'); }}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSystemsView(false); setActiveDomain('do'); } }}
+              >
+                <polygon
+                  points="200,193 203,202 212,202 206,207 208,216 200,211 192,216 194,207 188,202 197,202"
+                  fill={byId.do.color}
+                />
+              </g>
+            </svg>
+          </div>
+
+          {/* Info box */}
+          <div
+            className="mt-8 max-w-xl mx-auto p-6 bg-white rounded-2xl shadow"
+            style={{
+              border: `4px solid ${info.color}`,
+              boxShadow: systemsView
+                ? '0 8px 24px rgba(0,0,0,.06)'
+                : `0 0 14px ${info.color}33`,
+              color: info.color,
+            }}
+          >
+            <h3 className="text-xl font-semibold mb-2" style={{ color: info.color }}>
+              {info.title}
+            </h3>
+            <p className="text-slate-700">{info.text}</p>
+            {info.why && (
+              <p className="text-slate-700 mt-2">
+                <strong>Why this matters:</strong> {info.why.replace(/^Why this matters:\s*/,'')}
+              </p>
+            )}
+            {(activeDomain || systemsView) && (
+              <button
+                onClick={() => { setActiveDomain(null); setSystemsView(false); }}
+                className="mt-4 rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold hover:bg-slate-50"
+                style={{ color: info.color }}
+              >
+                Close
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
-
-    <div class="stage" aria-label="The Learning Framework™ interactive diagram">
-      <svg viewBox="0 0 400 400" role="img" aria-labelledby="tlfTitle tlfDesc">
-        <title id="tlfTitle">The Learning Framework™ diagram</title>
-        <desc id="tlfDesc">
-          A large green outer circle for How I Function. Three inner circles for How I Learn, How I Manage, and How I Feel.
-          A small magenta star in the center for What I Do.
-        </desc>
-
-        <defs>
-          <style>
-            .c-function{fill:var(--c-function);stroke:var(--c-function)}
-            .c-learn{fill:var(--c-learn)}
-            .c-manage{fill:var(--c-manage)}
-            .c-feel{fill:var(--c-feel)}
-            .c-do{fill:var(--c-do)}
-          </style>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--ink)" fill-opacity=".45"/>
-          </marker>
-        </defs>
-
-        <!-- How I Function: big outer circle -->
-        <circle class="hit c-function" id="hit-function"
-                cx="200" cy="200" r="182" fill-opacity=".12" stroke-width="3"
-                tabindex="0" aria-label="How I Function" />
-
-        <!-- Inner Venn -->
-        <circle class="hit c-learn" id="hit-learn"
-                cx="145" cy="175" r="86" fill-opacity=".42"
-                tabindex="0" aria-label="How I Learn"/>
-        <circle class="hit c-manage" id="hit-manage"
-                cx="255" cy="175" r="86" fill-opacity=".42"
-                tabindex="0" aria-label="How I Manage"/>
-        <circle class="hit c-feel" id="hit-feel"
-                cx="200" cy="265" r="86" fill-opacity=".42"
-                tabindex="0" aria-label="How I Feel"/>
-
-        <!-- What I Do: small star in center -->
-        <g class="hit" id="hit-do" tabindex="0" aria-label="What I Do"
-          transform="translate(200,205)">
-          <polygon class="c-do" points="0,-12 3,-3 12,-3 5,2 7,11 0,6 -7,11 -5,2 -12,-3 -3,-3"/>
-        </g>
-
-        <!-- Systems overlay: hidden by default -->
-        <g id="systemsOverlay" style="display:none">
-          <!-- Function feeds Learn/Manage/Feel -->
-          <line class="sys-line sys-arrow sys-pulse" x1="318" y1="200" x2="255" y2="175"/>
-          <line class="sys-line sys-arrow sys-pulse" x1="82"  y1="200" x2="145" y2="175"/>
-          <line class="sys-line sys-arrow sys-pulse" x1="200" y1="18"  x2="200" y2="265"/>
-          <!-- Learn/Manage/Feel converge to What I Do -->
-          <line class="sys-line sys-arrow" x1="145" y1="175" x2="200" y2="205"/>
-          <line class="sys-line sys-arrow" x1="255" y1="175" x2="200" y2="205"/>
-          <line class="sys-line sys-arrow" x1="200" y1="265" x2="200" y2="205"/>
-          <!-- Feedback outward (achievement signals upstream) -->
-          <path class="sys-line sys-arrow" d="M200 205 C 260 210, 300 230, 318 200"/>
-          <text class="sys-note" x="232" y="235">Results → signals, not the source</text>
-        </g>
-      </svg>
-    </div>
-
-    <section id="tlf-info" class="info" aria-live="polite">
-      <h3 id="tlf-heading">Click a domain</h3>
-      <p id="tlf-text">You’ll see the definition and why it matters.</p>
-      <p id="tlf-why" class="why" style="display:none"></p>
-      <button class="close" id="tlf-close" style="display:none">Close</button>
-    </section>
-  </main>
-
-<script>
-(function(){
-  // Exact definitions + why-lines from your Participant Guide
-  const DATA = {
-    function: {
-      name: "How I Function",
-      color: getCss('--c-function'),
-      what: "Before strategy, check the highway. When the road (brain & body) is clear, every other domain moves.",
-      why:  "Foundation domain – clears the highway for every other system."
-    },
-    learn: {
-      name: "How I Learn",
-      color: getCss('--c-learn'),
-      what: "We can only apply at the level we understand.",
-      why:  "Learning progression – build knowledge from exposure to mastery."
-    },
-    manage: {
-      name: "How I Manage",
-      color: getCss('--c-manage'),
-      what: "Bridge between knowing and doing.",
-      why:  "Turns knowing into doing. Follow the sequence. Each layer relies on the one above it."
-    },
-    feel: {
-      name: "How I Feel",
-      color: getCss('--c-feel'),
-      what: "Emotions are energy in motion — and the signal that we may need support.",
-      why:  "Regulation and relationships enable cognition and decision-making."
-    },
-    do: {
-      name: "What I Do",
-      color: getCss('--c-do'),
-      what: "The Visible Output. Signal, not source. When effort stalls, look upstream first.",
-      why:  "Self‑efficacy and outcomes reflect the state of upstream systems."
-    }
-  };
-
-  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
-
-  const info = document.getElementById("tlf-info");
-  const heading = document.getElementById("tlf-heading");
-  const text = document.getElementById("tlf-text");
-  const why = document.getElementById("tlf-why");
-  const closeBtn = document.getElementById("tlf-close");
-  const sysToggle = document.getElementById("systemsToggle");
-  const overlay = document.getElementById("systemsOverlay");
-
-  const hits = {
-    function: document.getElementById("hit-function"),
-    learn: document.getElementById("hit-learn"),
-    manage: document.getElementById("hit-manage"),
-    feel: document.getElementById("hit-feel"),
-    do: document.getElementById("hit-do")
-  };
-
-  let active = null;
-  let systemsOn = false;
-
-  function setActive(key){
-    if(active && hits[active]){
-      hits[active].classList.remove("active","grow");
-      if(active === "function"){ hits[active].setAttribute("stroke-width","3"); hits[active].style.filter=""; }
-    }
-    active = key;
-    const el = hits[key];
-    el.classList.add("active");
-    if(key === "function"){
-      el.setAttribute("stroke-width","5");
-      el.style.filter = "drop-shadow(0 0 12px rgba(0,166,81,.35))";
-    }else{
-      el.classList.add("grow");
-    }
-
-    const {name,color,what,why:whyLine} = DATA[key];
-    info.style.borderColor = color;
-    info.style.boxShadow = `0 0 14px ${color}55`;
-    info.style.setProperty("color", color);
-    heading.textContent = name;
-    heading.style.color = color;
-    text.textContent = what;
-    why.textContent = "Why this matters: " + whyLine;
-    why.style.display = "block";
-    closeBtn.style.display = "inline-block";
-  }
-
-  function clearActive(){
-    if(active && hits[active]){
-      hits[active].classList.remove("active","grow");
-      if(active === "function"){ hits[active].setAttribute("stroke-width","3"); hits[active].style.filter=""; }
-    }
-    active = null;
-    info.style.borderColor = "#e2e8f0";
-    info.style.boxShadow = "0 8px 24px rgba(0,0,0,.06)";
-    heading.textContent = "Click a domain";
-    heading.style.color = "inherit";
-    text.textContent = "You’ll see the definition and why it matters.";
-    why.style.display = "none";
-    closeBtn.style.display = "none";
-  }
-
-  Object.entries(hits).forEach(([key,el])=>{
-    el.addEventListener("click", ()=>setActive(key));
-    el.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setActive(key);} });
-  });
-  closeBtn.addEventListener("click", clearActive);
-
-  sysToggle.addEventListener("click", ()=>{
-    systemsOn = !systemsOn;
-    sysToggle.setAttribute("aria-pressed", systemsOn ? "true" : "false");
-    overlay.style.display = systemsOn ? "block" : "none";
-    if(systemsOn){
-      heading.textContent = "How the system works together";
-      heading.style.color = "var(--ink)";
-      info.style.borderColor = "#0f172a22";
-      info.style.boxShadow = "0 8px 24px rgba(0,0,0,.06)";
-      text.textContent = "Start upstream. Strong Function enables effective Learning, Managing, and Feeling. These three converge in What I Do. Results then send signals back upstream so you can rebalance before adding more effort.";
-      why.textContent = "Why this matters: You remove friction instead of pushing harder.";
-      why.style.display = "block";
-      if(active && hits[active]){
-        hits[active].classList.remove("active","grow");
-        if(active === "function"){ hits[active].setAttribute("stroke-width","3"); hits[active].style.filter=""; }
-        active = null;
-      }
-    }
-  });
-})();
-</script>
-</body>
-</html>
+  );
+}
