@@ -28,7 +28,9 @@
   .why{margin-top:8px;font-size:14px;color:#334155}
   .close{margin-top:12px;border:2px solid currentColor;border-radius:999px;padding:6px 12px;font-size:14px;background:#fff;cursor:pointer}
   .hit{cursor:pointer;transition:transform .2s ease, filter .2s ease;transform-origin:center}
-  .hit:focus{outline:3px solid #111827;outline-offset:2px}
+  /* remove the rectangular focus box and use a gentle glow for keyboards */
+  .hit:focus{outline:none}
+  .hit:focus-visible{filter:drop-shadow(0 0 10px rgba(0,0,0,.12))}
   .hit.active{filter:drop-shadow(0 0 10px rgba(0,0,0,.08))}
   .grow{transform:scale(1.06)}
   .sys-line{stroke:var(--ink);stroke-opacity:.25;stroke-width:2}
@@ -41,7 +43,7 @@
 <body>
   <main class="wrap" id="tlf">
     <h1 class="title">The Learning Framework™</h1>
-    <p class="sub">Click a domain to see what it is, why it matters, and how it supports real learning and achievement. Toggle “Systems View” to see how the domains influence each other.</p>
+    <p class="sub">Click a domain to see exactly what it is and why it matters. Toggle “Systems View” to see how the domains influence each other.</p>
 
     <div class="controls">
       <button id="systemsToggle" type="button" aria-pressed="false">Systems View</button>
@@ -109,7 +111,7 @@
 
     <section id="tlf-info" class="info" aria-live="polite">
       <h3 id="tlf-heading">Click a domain</h3>
-      <p id="tlf-text">You will see a short, practical explanation rooted in the framework.</p>
+      <p id="tlf-text">You’ll see the definition and why it matters.</p>
       <p id="tlf-why" class="why" style="display:none"></p>
       <button class="close" id="tlf-close" style="display:none">Close</button>
     </section>
@@ -117,48 +119,41 @@
 
 <script>
 (function(){
+  // Exact definitions + why-lines from your Participant Guide
   const DATA = {
     function: {
       name: "How I Function",
-      color: getComputedStyle(document.documentElement).getPropertyValue('--c-function').trim(),
-      what:
-        "Neurological foundation that clears the mental highway: working memory and processing speed, health, sleep, hydration, nutrition, exercise, medication management.",
-      why:
-        "Because foundation drives everything else. Start upstream when things feel foggy or effortful."
+      color: getCss('--c-function'),
+      what: "Before strategy, check the highway. When the road (brain & body) is clear, every other domain moves.",
+      why:  "Foundation domain – clears the highway for every other system."
     },
     learn: {
       name: "How I Learn",
-      color: getComputedStyle(document.documentElement).getPropertyValue('--c-learn').trim(),
-      what:
-        "Cognitive progression from exposure to mastery: familiarity, remembering, understanding, applying, analyzing, evaluating, creating, overlearning.",
-      why:
-        "We can only apply at the level we understand. Strengthen the first weak link to unlock progress."
+      color: getCss('--c-learn'),
+      what: "We can only apply at the level we understand.",
+      why:  "Learning progression – build knowledge from exposure to mastery."
     },
     manage: {
       name: "How I Manage",
-      color: getComputedStyle(document.documentElement).getPropertyValue('--c-manage').trim(),
-      what:
-        "Executive bridge from knowing to doing: attention and flexible thinking, organization, planning and preparing, task initiation, time management.",
-      why:
-        "Structure turns knowledge into action. Follow the sequence so each step scaffolds the next."
+      color: getCss('--c-manage'),
+      what: "Bridge between knowing and doing.",
+      why:  "Turns knowing into doing. Follow the sequence. Each layer relies on the one above it."
     },
     feel: {
       name: "How I Feel",
-      color: getComputedStyle(document.documentElement).getPropertyValue('--c-feel').trim(),
-      what:
-        "Social‑emotional functioning: self‑awareness, self‑management, social awareness, relationship skills, responsible decision‑making.",
-      why:
-        "Emotions are signals that guide support. Regulation restores balance so cognition can work."
+      color: getCss('--c-feel'),
+      what: "Emotions are energy in motion — and the signal that we may need support.",
+      why:  "Regulation and relationships enable cognition and decision-making."
     },
     do: {
       name: "What I Do",
-      color: getComputedStyle(document.documentElement).getPropertyValue('--c-do').trim(),
-      what:
-        "Visible output and self‑efficacy: clarity, autonomy, motivation, engagement, perseverance, resilience, achievement.",
-      why:
-        "Treat results as feedback about the system. Look upstream when effort stalls."
+      color: getCss('--c-do'),
+      what: "The Visible Output. Signal, not source. When effort stalls, look upstream first.",
+      why:  "Self‑efficacy and outcomes reflect the state of upstream systems."
     }
   };
+
+  function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
   const info = document.getElementById("tlf-info");
   const heading = document.getElementById("tlf-heading");
@@ -216,7 +211,7 @@
     info.style.boxShadow = "0 8px 24px rgba(0,0,0,.06)";
     heading.textContent = "Click a domain";
     heading.style.color = "inherit";
-    text.textContent = "You will see a short, practical explanation rooted in the framework.";
+    text.textContent = "You’ll see the definition and why it matters.";
     why.style.display = "none";
     closeBtn.style.display = "none";
   }
@@ -237,7 +232,7 @@
       info.style.borderColor = "#0f172a22";
       info.style.boxShadow = "0 8px 24px rgba(0,0,0,.06)";
       text.textContent = "Start upstream. Strong Function enables effective Learning, Managing, and Feeling. These three converge in What I Do. Results then send signals back upstream so you can rebalance before adding more effort.";
-      why.textContent = "Why this matters: You remove friction instead of pushing harder. That is the path to durable progress.";
+      why.textContent = "Why this matters: You remove friction instead of pushing harder.";
       why.style.display = "block";
       if(active && hits[active]){
         hits[active].classList.remove("active","grow");
